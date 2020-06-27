@@ -41,26 +41,54 @@ class Rat {
 
     setX(way){
         if(way === "right"){
-            this.x = this.x + this.speed;
-            this.html.style.left = this.x + "px";
+            if(this.x + this.speed >= window.innerWidth-30){
+                this.direction = this.direction.filter((element)=>{
+                    return element !== "d"
+                });
+                this.direction.push("a");
+            }else{
+                this.x = this.x + this.speed;
+                this.html.style.left = this.x + "px";
+            }
         }else{
-            this.x = this.x - this.speed;
-            this.html.style.left = this.x + "px";
+            if(this.x - this.speed <= 0){
+                this.direction = this.direction.filter((element)=>{
+                    return element !== "a"
+                });
+                this.direction.push("d");
+            }else{
+                this.x = this.x - this.speed;
+                this.html.style.left = this.x + "px";
+            }
         }
     }
 
     setY(way){
         if(way === "up"){
-            this.y = this.y - this.speed;
-            this.html.style.top = this.y + "px";
+            if(this.y - this.speed <= 0){
+                this.direction = this.direction.filter((element)=>{
+                    return element !== "w"
+                });
+                this.direction.push("s");
+            }else{
+                this.y = this.y - this.speed;
+                this.html.style.top = this.y + "px";
+            }
         }else{
-            this.y = this.y + this.speed;
-            this.html.style.top = this.y + "px";
+            if(this.y + this.speed >= window.innerHeight-30){
+                this.direction = this.direction.filter((element)=>{
+                    return element !== "s"
+                });
+                this.direction.push("w");
+            }else{
+                this.y = this.y + this.speed;
+                this.html.style.top = this.y + "px";
+            }
         }
     }
 
     increaseSpeed(){
-        this.speed = this.speed * 1.2;
+        this.speed = this.speed * 1.1;
     }
 
     die(){
@@ -87,6 +115,7 @@ class Rat {
         this.changeTime--;
         if(this.changeTime <= 0){
             const dirNum = Math.floor(Math.random()*8);
+
             switch(dirNum){
                 case 0:
                     this.direction = ["w"];
@@ -158,20 +187,11 @@ setInterval(()=>{
     if(secondsLeft>0){
         secondsLeft--;
     }
+    nextLvl();
 }, 1000);
 
 setInterval(()=>{
     if(ratsLeft === 0){//win
-        nextLvl();
-        nextLvl();
-        nextLvl();
-        nextLvl();
-        nextLvl();
-        nextLvl();
-        nextLvl();
-        nextLvl();
-        nextLvl();
-        nextLvl();
         nextLvl();
     }else if(secondsLeft === 0){//defeat
         defeated()
@@ -183,5 +203,4 @@ setInterval(()=>{
             }
         });
     }
-    
 }, 50);
