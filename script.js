@@ -30,10 +30,87 @@ class Rat {
 
         this.html = html;
 
+        this.alive = true;
+
+        this.changeTime = Math.random() * 10;
+
+        this.html.style.top = this.y + "px";
+        this.html.style.left = this.x + "px";
+
+    }
+
+    setX(way){
+        if(way === "right"){
+            this.x = this.x + this.speed;
+            this.html.style.left = this.x + "px";
+        }else{
+            this.x = this.x - this.speed;
+            this.html.style.left = this.x + "px";
+        }
+    }
+
+    setY(way){
+        if(way === "up"){
+            this.y = this.y - this.speed;
+            this.html.style.top = this.y + "px";
+        }else{
+            this.y = this.y + this.speed;
+            this.html.style.top = this.y + "px";
+        }
     }
 
     increaseSpeed(){
-        this.speed = this.speed * 2;
+        this.speed = this.speed * 1.2;
+    }
+
+    die(){
+        this.alive = false;
+        this.html.style.backgroundColor = "red";
+    }
+
+    move(){
+        if(this.direction.includes("w")){
+            this.setY("up");
+        }
+        if(this.direction.includes("d")){
+            this.setX("right");
+        }
+        if(this.direction.includes("s")){
+            this.setY("down");
+        }
+        if(this.direction.includes("a")){
+            this.setX("left");
+        }
+    }
+
+    changeDirection(){
+        const dirNum = Math.floor(Math.random()*8);
+        switch(dirNum){
+            case 0:
+                this.direction = ["w"];
+            break;
+            case 1:
+                this.direction = ["w","d"];
+            break;
+            case 2:
+                this.direction = ["d"];
+            break;
+            case 3:
+                this.direction = ["d","s"];
+            break;
+            case 4:
+                this.direction = ["s"];
+            break;
+            case 5:
+                this.direction = ["s","a"];
+            break;
+            case 6:
+                this.direction = ["a"];
+            break;
+            case 7:
+                this.direction = ["a","w"];
+            break;
+        }
     }
 }
 
@@ -77,15 +154,34 @@ setInterval(()=>{
     if(secondsLeft>0){
         secondsLeft--;
     }
+    rats.forEach((element)=>{
+        if(element.alive){
+            element.changeDirection();
+        }
+    });
 }, 1000);
 
 setInterval(()=>{
     if(ratsLeft === 0){//win
         nextLvl();
+        nextLvl();
+        nextLvl();
+        nextLvl();
+        nextLvl();
+        nextLvl();
+        nextLvl();
+        nextLvl();
+        nextLvl();
+        nextLvl();
+        nextLvl();
     }else if(secondsLeft === 0){//defeat
         defeated()
     }else{//game still going
-
+        rats.forEach((element)=>{
+            if(element.alive){
+                element.move();
+            }
+        });
     }
     
-}, 10);
+}, 50);
