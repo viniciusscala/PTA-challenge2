@@ -119,27 +119,35 @@ class Rat {
             switch(dirNum){
                 case 0:
                     this.direction = ["w"];
+                    this.html.style.transform = "rotate(0deg)"
                 break;
                 case 1:
                     this.direction = ["w","d"];
+                    this.html.style.transform = "rotate(45deg)"
                 break;
                 case 2:
                     this.direction = ["d"];
+                    this.html.style.transform = "rotate(90deg)"
                 break;
                 case 3:
                     this.direction = ["d","s"];
+                    this.html.style.transform = "rotate(135deg)"
                 break;
                 case 4:
                     this.direction = ["s"];
+                    this.html.style.transform = "rotate(180deg)"
                 break;
                 case 5:
                     this.direction = ["s","a"];
+                    this.html.style.transform = "rotate(225deg)"
                 break;
                 case 6:
                     this.direction = ["a"];
+                    this.html.style.transform = "rotate(270deg)"
                 break;
                 case 7:
                     this.direction = ["a","w"];
+                    this.html.style.transform = "rotate(315deg)"
                 break;
             }
             this.changeTime = Math.random() * 20;
