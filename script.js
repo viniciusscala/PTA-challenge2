@@ -32,7 +32,7 @@ class Rat {
 
         this.alive = true;
 
-        this.changeTime = Math.random() * 10;
+        this.changeTime = Math.random() * 20;
 
         this.html.style.top = this.y + "px";
         this.html.style.left = this.x + "px";
@@ -84,32 +84,36 @@ class Rat {
     }
 
     changeDirection(){
-        const dirNum = Math.floor(Math.random()*8);
-        switch(dirNum){
-            case 0:
-                this.direction = ["w"];
-            break;
-            case 1:
-                this.direction = ["w","d"];
-            break;
-            case 2:
-                this.direction = ["d"];
-            break;
-            case 3:
-                this.direction = ["d","s"];
-            break;
-            case 4:
-                this.direction = ["s"];
-            break;
-            case 5:
-                this.direction = ["s","a"];
-            break;
-            case 6:
-                this.direction = ["a"];
-            break;
-            case 7:
-                this.direction = ["a","w"];
-            break;
+        this.changeTime--;
+        if(this.changeTime <= 0){
+            const dirNum = Math.floor(Math.random()*8);
+            switch(dirNum){
+                case 0:
+                    this.direction = ["w"];
+                break;
+                case 1:
+                    this.direction = ["w","d"];
+                break;
+                case 2:
+                    this.direction = ["d"];
+                break;
+                case 3:
+                    this.direction = ["d","s"];
+                break;
+                case 4:
+                    this.direction = ["s"];
+                break;
+                case 5:
+                    this.direction = ["s","a"];
+                break;
+                case 6:
+                    this.direction = ["a"];
+                break;
+                case 7:
+                    this.direction = ["a","w"];
+                break;
+            }
+            this.changeTime = Math.random() * 20;
         }
     }
 }
@@ -154,11 +158,6 @@ setInterval(()=>{
     if(secondsLeft>0){
         secondsLeft--;
     }
-    rats.forEach((element)=>{
-        if(element.alive){
-            element.changeDirection();
-        }
-    });
 }, 1000);
 
 setInterval(()=>{
@@ -179,6 +178,7 @@ setInterval(()=>{
     }else{//game still going
         rats.forEach((element)=>{
             if(element.alive){
+                element.changeDirection();
                 element.move();
             }
         });
