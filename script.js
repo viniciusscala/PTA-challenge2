@@ -13,8 +13,8 @@ let ratsLeft = ratsPerLvl;
 let secondsLeft = 30;
 
 const catForce = 10;
-const catInitialX = 300;
-const catInitialY = 300;
+const catInitialX = mainWidth/2;
+const catInitialY = mainHeight/2;
 
 const toDegree = (value)=>{
     return (value/pi)*180;
@@ -203,6 +203,10 @@ const cat = {
 
     resultantForce: new Vector(0,0),
 
+    catForce: new Vector(catForce, 0),
+
+    alive: true,
+
     html: document.querySelector(".cat")
 }
 
@@ -291,7 +295,6 @@ class Rat{
     }
 
     setRatForce(){
-
         this.setResultantForce();
     }
 
@@ -302,6 +305,7 @@ class Rat{
 
     passTime(){
         this.setRatForce()
+        this.turn();
     }
 
     turn(){
@@ -365,6 +369,7 @@ const addRat = ()=>{
 
 const nextLvl = ()=>{
     lvl++;
+    document.querySelector("p").innerHTML = "Level " + lvl;
     if(lvl%2!==0){//if it is odd add a rat
         addRat();
     }else{//if it is even increase rat speed
@@ -391,13 +396,12 @@ const defeated = ()=>{
 const passTime = ()=>{
     rats.forEach((element)=>{
         element.passTime();
-        element.turn();
     });
 }
 
 setInterval(()=>{
     if(secondsLeft>0){
-        // secondsLeft--;
+        secondsLeft--;
     }
     nextLvl();
     console.log(lvl);
