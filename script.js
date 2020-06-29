@@ -12,7 +12,25 @@ let rats = [];
 let ratsLeft = ratsPerLvl;
 let secondsLeft = 30;
 
-const catForce = 10;
+let keys = [];
+
+document.addEventListener("keydown", (e)=>{
+    console.log(e);
+    if(!keys.includes(e.key)){
+        keys.push(e.key);
+    }
+    console.log(keys);
+});
+
+document.addEventListener("keyup", (e)=>{
+    console.log(e);
+    keys = keys.filter((element)=>{
+        return element !== e.key;
+    });
+    console.log(keys);
+});
+
+const catForce = 1;
 const catInitialX = mainWidth/2;
 const catInitialY = mainHeight/2;
 
@@ -132,7 +150,11 @@ class Vector{
     sum(vector){
         if(this.magnitude===0 || vector.magnitude===0){
             if(this.magnitude===0){
-                return vector
+                if(vector.magnitude===0){
+                    return this;
+                }else{
+                    return vector
+                }
             }else{
                 return this;
             }
@@ -193,22 +215,129 @@ class Vector{
     }
 }
 
-const cat = {
-    position: {
-        x: catInitialX,
-        y: catInitialY
-    },
+class Cat{
+    constructor(html){
+        const x = catInitialX;
+        const y = catInitialY;
 
-    velocity: new Vector(0,0),
+        this.position = {
+            x: x,
+            y: y
+        }
 
-    resultantForce: new Vector(0,0),
+        this.velocity = new Vector(0,0);
 
-    catForce: new Vector(catForce, 0),
+        this.resultantForce = new Vector(0,0);
 
-    alive: true,
+        this.ratForce = new Vector(0, 0);
 
-    html: document.querySelector(".cat")
+        this.alive = true;
+
+        this.html = html;
+        this.html.style.top = this.position.y + "px";
+        this.html.style.left = this.position.x + "px";
+    }
+
+    setPosition(){
+
+
+        const vectorX = this.velocity.decompose().vectorX;
+        const vectorY = this.velocity.decompose().vectorY;
+
+        const newX = this.position.x + vectorX.magnitude*vectorX.orientation().x;
+        const newY = this.position.y - vectorY.magnitude*vectorY.orientation().y;
+
+        if(newX > mainWidth){
+            this.ratForce.invertX();
+            this.velocity.invertX();
+        }else if(newX < 0){
+            this.ratForce.invertX();
+            this.velocity.invertX();
+        }else{
+            this.position.x = newX;
+        }
+        
+        if(newY > mainHeight){
+            this.ratForce.invertY();
+            this.velocity.invertY();
+        }else if(newY <0){
+            this.ratForce.invertY();
+            this.velocity.invertY();
+        }else{
+            this.position.y = newY;
+        }
+
+        this.html.style.top = this.position.y + "px";
+        this.html.style.left = this.position.x + "px";
+    }
+
+    setVelocity(){
+
+        const velocity = this.velocity.sum(this.resultantForce);
+
+        this.velocity = velocity;
+
+        let d = toDegree(this.velocity.direction);
+
+        d = 360 - d;
+
+        this.html.style.transform = "rotate("+ d +"deg)";
+
+        this.setPosition();
+    }
+
+    setResultantForce(){
+
+
+        const max = (this.velocity.magnitude/Vmax);
+
+        const resistiveForce = new Vector((max*ratForce), (this.velocity.direction + pi));
+
+        let resultant = this.ratForce.sum(resistiveForce);
+        this.resultantForce = resultant;
+
+        this.setVelocity();
+    }
+
+    setRatForce(vector){
+
+        this.ratForce = vector;
+        this.setResultantForce();
+    }
+
+    die(){
+        this.alive = false;
+        this.html.style.backgroundColor = "red";
+    }
+
+    passTime(){
+        this.move();
+    }
+
+    move(){
+
+        let keyVector = new Vector(0,0);
+
+        if(keys.includes("d")){
+            keyVector = keyVector.sum(new Vector(catForce, 0));
+        }
+        if(keys.includes("w")){
+            keyVector = keyVector.sum(new Vector(catForce, pi/2))
+        }
+        if(keys.includes("a")){
+            keyVector = keyVector.sum(new Vector(catForce, pi))
+        }
+        if(keys.includes("s")){
+            keyVector = keyVector.sum(new Vector(catForce, 3*pi/2))
+        }
+
+        const newVector = this.ratForce.sum(keyVector);
+        this.setRatForce(newVector);
+    }
+
 }
+
+const cat = new Cat(document.querySelector(".cat"));
 
 class Rat{
     constructor(html){
@@ -301,6 +430,12 @@ class Rat{
     die(){
         this.alive = false;
         this.html.style.backgroundColor = "red";
+        ratsLeft--;
+    }
+
+    revive(){
+        this.alive = true;
+        this.html.style.backgroundColor = "black";
     }
 
     passTime(){
@@ -311,7 +446,6 @@ class Rat{
     turn(){
         this.changeTime--;
         if(this.changeTime <= 0){
-            console.log("muda");
             const dirNum = Math.floor(Math.random()*8);
             switch(dirNum){
                 case 0:
@@ -368,6 +502,11 @@ const addRat = ()=>{
 }
 
 const nextLvl = ()=>{
+    
+    rats.forEach((element)=>{
+        element.revive();
+    });
+
     lvl++;
     document.querySelector("p").innerHTML = "Level " + lvl;
     if(lvl%2!==0){//if it is odd add a rat
@@ -390,12 +529,20 @@ const defeated = ()=>{
     document.querySelectorAll(".rat").forEach((element)=>{
         element.remove();
     });
-    nextLvl();
+    // nextLvl();
 }
 
 const passTime = ()=>{
+    cat.passTime();
     rats.forEach((element)=>{
-        element.passTime();
+        if(element.alive){
+            element.passTime();
+            if(cat.position.x > element.position.x - 30 && cat.position.x < element.position.x + 30){
+                if(cat.position.y > element.position.y - 30 && cat.position.y < element.position.y + 30){
+                    element.die();
+                }
+            }
+        }
     });
 }
 
@@ -403,8 +550,7 @@ setInterval(()=>{
     if(secondsLeft>0){
         secondsLeft--;
     }
-    nextLvl();
-    console.log(lvl);
+    // nextLvl();
 }, 1000);
 
 setInterval(()=>{
