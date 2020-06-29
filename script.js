@@ -14,6 +14,8 @@ let secondsLeft = 30;
 
 let keys = [];
 
+let running = true;
+
 document.addEventListener("keydown", (e)=>{
     console.log(e);
     if(!keys.includes(e.key)){
@@ -248,7 +250,7 @@ class Cat{
         const newX = this.position.x + vectorX.magnitude*vectorX.orientation().x;
         const newY = this.position.y - vectorY.magnitude*vectorY.orientation().y;
 
-        if(newX > mainWidth){
+        if(newX > mainWidth - 20){
             this.ratForce.invertX();
             this.velocity.invertX();
         }else if(newX < 0){
@@ -258,7 +260,7 @@ class Cat{
             this.position.x = newX;
         }
         
-        if(newY > mainHeight){
+        if(newY > mainHeight -20){
             this.ratForce.invertY();
             this.velocity.invertY();
         }else if(newY <0){
@@ -377,7 +379,7 @@ class Rat{
         const newX = this.position.x + vectorX.magnitude*vectorX.orientation().x;
         const newY = this.position.y - vectorY.magnitude*vectorY.orientation().y;
 
-        if(newX > mainWidth){
+        if(newX > mainWidth - 10){
             this.ratForce.invertX();
             this.velocity.invertX();
         }else if(newX < 0){
@@ -387,7 +389,7 @@ class Rat{
             this.position.x = newX;
         }
         
-        if(newY > mainHeight){
+        if(newY > mainHeight -10){
             this.ratForce.invertY();
             this.velocity.invertY();
         }else if(newY <0){
@@ -442,6 +444,10 @@ class Rat{
     revive(){
         this.alive = true;
         this.html.style.backgroundColor = "black";
+        this.position = {
+            x: Math.floor(Math.random() * mainWidth),
+            y: Math.floor(Math.random() * mainHeight)
+        }
     }
 
     passTime(){
@@ -559,11 +565,11 @@ setInterval(()=>{
 }, 1000);
 
 setInterval(()=>{
-    if(ratsLeft === 0){//win
-        nextLvl();
-    }else if(secondsLeft === 0){//defeat
-        defeated()
-    }else{//game still going
-        passTime();
-    }
+        if(ratsLeft === 0){//win
+                nextLvl();
+        }else if(secondsLeft === 0){//defeat
+                defeated();
+        }else{//game still going
+            passTime();
+        }
 }, 50);
