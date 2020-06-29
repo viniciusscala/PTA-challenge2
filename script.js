@@ -30,9 +30,10 @@ document.addEventListener("keyup", (e)=>{
     console.log(keys);
 });
 
-const catForce = 1;
+const catForce = 4;
 const catInitialX = mainWidth/2;
 const catInitialY = mainHeight/2;
+let VMaxCat = 10;
 
 const toDegree = (value)=>{
     return (value/pi)*180;
@@ -289,7 +290,7 @@ class Cat{
     setResultantForce(){
 
 
-        const max = (this.velocity.magnitude/Vmax);
+        const max = (this.velocity.magnitude/VMaxCat);
 
         const resistiveForce = new Vector((max*ratForce), (this.velocity.direction + pi));
 
@@ -332,6 +333,11 @@ class Cat{
         }
 
         const newVector = this.ratForce.sum(keyVector);
+        if(keys.length>0){
+            newVector.setMagnitude(catForce);
+        }else{
+            newVector.setMagnitude(0);
+        }
         this.setRatForce(newVector);
     }
 
@@ -502,13 +508,11 @@ const addRat = ()=>{
 }
 
 const nextLvl = ()=>{
-    
     rats.forEach((element)=>{
         element.revive();
     });
-
     lvl++;
-    document.querySelector("p").innerHTML = "Level " + lvl;
+    secondsLeft = 30;
     if(lvl%2!==0){//if it is odd add a rat
         addRat();
     }else{//if it is even increase rat speed
@@ -529,7 +533,7 @@ const defeated = ()=>{
     document.querySelectorAll(".rat").forEach((element)=>{
         element.remove();
     });
-    // nextLvl();
+    nextLvl();
 }
 
 const passTime = ()=>{
@@ -549,6 +553,7 @@ const passTime = ()=>{
 setInterval(()=>{
     if(secondsLeft>0){
         secondsLeft--;
+        document.querySelector("header").innerHTML = "<p>Level "+lvl+"</p> <p>Time "+secondsLeft+ " </p>";
     }
     // nextLvl();
 }, 1000);
