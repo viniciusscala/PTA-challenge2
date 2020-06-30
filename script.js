@@ -437,13 +437,13 @@ class Rat{
 
     die(){
         this.alive = false;
-        this.html.style.backgroundColor = "red";
+        this.html.style.visibility = "hidden";
         ratsLeft--;
     }
 
     revive(){
         this.alive = true;
-        this.html.style.backgroundColor = "black";
+        this.html.style.visibility = "visible";
         this.position = {
             x: Math.floor(Math.random() * mainWidth),
             y: Math.floor(Math.random() * mainHeight)
@@ -502,8 +502,9 @@ class Rat{
 
 const addRat = ()=>{
     ratsPerLvl++;
-    const div = document.createElement("div");
+    const div = document.createElement("img");
     div.className = "rat";
+    div.src = "./img/rat.png";
     div.id = "rat" + ratsPerLvl;
     document.querySelector("main").appendChild(div);
     if(rats.length===0){
